@@ -1,0 +1,30 @@
+{% extends "adminlayout.html" %}
+
+{% block content %}
+<h1>หน้าหลัก แอดมิน</h1>
+
+
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">username</th>
+        <th scope="col">password</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+{% for i in data%}
+      <tr>
+        <th scope="row">{{i.0}}</th>
+        <td>{{i.1}}</td>
+        <td>{{i.2}}</td>
+      </tr>
+    </tbody>
+{% endfor %}    
+</table>
+
+
+{% endblock %}
