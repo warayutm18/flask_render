@@ -1,4 +1,5 @@
 from flask import Flask,render_template,request,redirect, url_for,session
+import mysql.connector
 
 
 
@@ -6,9 +7,21 @@ from flask import Flask,render_template,request,redirect, url_for,session
 
 app = Flask(__name__)
 
+mydb = mysql.connector.connect(
+    host="bkmrzjuc0txca2pggcfn-mysql.services.clever-cloud.com",
+    user="uaxbdpnfmiwngrxc",
+    password="wmrvJFQd69gb7FOGZnMy",
+    database="bkmrzjuc0txca2pggcfn"
+)
+
 @app.route("/admin")
 def admin():
-    return render_template('admin.html')
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM admin")
+    fetchdata = mycursor.fetchall()
+    mycursor.close()
+
+    return render_template('admin.html',data = fetchdata)
 
 @app.route("/",methods=['POST','GET'])
 def login():
