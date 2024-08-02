@@ -2,27 +2,21 @@
 
 {% block content %}
 <h1>หน้าหลัก แอดมิน</h1>
-
-<table class="table">
-    <thead>
-      <tr>
-        <th scope="col">id</th>
-        <th scope="col">username</th>
-        <th scope="col">password</th>
-      </tr>
-    </thead>
-    
-    <tbody>
-{% for i in data%}
-      <tr>
-        <th scope="row">{{i.0}}</th>
-        <td>{{i.1}}</td>
-        <td>{{i.2}}</td>
-      </tr>
-    </tbody>
-{% endfor %}    
-</table>
-
+{{data}}
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+      <div class="card bg-light">
+          <div class="card-header text-white" style="background-color: #00AA9E;">
+            ...
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">จัดการข้อมูลคลังข้อสอบทักษะภาษาอังกฤษ</h4>
+            <p class="card-text"></p>
+            <a href="{{ url_for('exambank')}}" class="btn btn-primary">Go</a>
+          </div>
+        </div>
+  </div>
+</div>
 
 
 {% endblock %}

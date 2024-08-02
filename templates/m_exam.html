@@ -1,0 +1,64 @@
+{% extends "layoutadmin.html" %}
+
+{% block content %}
+<div style="text-align: center;"><h1>จัดการข้อมูลคลังข้อสอบ</h1></div>
+<div class="container border border-secondary rounded">
+    <h2 class="my-4">ฟอร์มเพิ่มคำถาม</h2>
+    <form action="{{url_for('exambank')}}" method="POST">
+        <div class="form-group">
+            <label for="question">คำถาม</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="question"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="option_a">ตัวเลือก A</label>
+            <input type="text" class="form-control" id="option_a" name="option_a" required>
+        </div>
+        <div class="form-group">
+            <label for="option_b">ตัวเลือก B</label>
+            <input type="text" class="form-control" id="option_b" name="option_b" required>
+        </div>
+        <div class="form-group">
+            <label for="option_c">ตัวเลือก C</label>
+            <input type="text" class="form-control" id="option_c" name="option_c" required>
+        </div>
+        <div class="form-group">
+            <label for="option_d">ตัวเลือก D</label>
+            <input type="text" class="form-control" id="option_d" name="option_d" required>
+        </div>
+        <div class="form-group">
+            <label for="difficulty">ระดับความยาก</label>
+            <select class="form-control" id="difficulty" name="difficulty" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="answer">คำตอบ</label>
+            <input type="text" class="form-control" id="answer" name="answer" required>
+        </div>
+        <button type="submit" class="btn btn-primary">บันทึกข้อมูล</button>
+        <button type="reset" class="btn btn-secondary">ยกเลิก</button>
+    </form>
+</div>
+
+<br>
+<div class="container border border-secondary rounded">
+    <h2 class="my-4">Saved Questions</h2>
+    {% for q in q_data %}
+    <ul class="list-group">
+            <li class="list-group-item">
+                <h5>Question: {{q.1}}</h5>
+                <p>A: {{q.2}}</p>
+                <p>B: {{q.3}}</p>
+                <p>C: {{q.4}}</p>
+                <p>D: {{q.5}}</p>
+                <p>Difficulty: {{q.6}}</p>
+                <p>Answer: {{q.7}}</p>
+            </li>
+    </ul>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

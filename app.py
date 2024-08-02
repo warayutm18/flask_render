@@ -4,8 +4,6 @@ import os
 
 
 
-
-
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
@@ -24,6 +22,33 @@ def admin():
     mycursor.close()
 
     return render_template('admin.html',data = fetchdata)
+
+@app.route("/exambank",methods=['POST','GET'])
+def exambank():
+    if request.method == 'POST':
+        questions = request.form['question']
+        option_a = request.form['option_a']
+        option_b = request.form['option_b']
+        option_c = request.form['option_c']
+        option_d = request.form['option_d']
+        difficultys = request.form['difficulty']
+        answer = request.form['answer']
+        mycursor = mydb.cursor()
+        query = "INSERT INTO examQ (question,option_a,option_b,option_c,option_d,difficulty,answer) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        values = (questions,option_a,option_b,option_c,option_d,difficultys,answer)
+        try:
+            mycursor.execute(query, values)
+            mydb.commit()
+            print("Data inserted successfully.")
+        except mysql.connector.Error as err:
+            print("Something went wrong: {}".format(err))
+        
+       
+    
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM examQ")
+    fetchdata = mycursor.fetchall()
+    return render_template('m_exam.html', q_data=fetchdata)
 
 @app.route("/",methods=['POST','GET'])
 def login():
@@ -46,4 +71,4 @@ def login():
 
 
 if __name__== "__main__":
-    app.run()
+    app.run(debug=True)
