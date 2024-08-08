@@ -4,6 +4,17 @@
 <div style="text-align: center;"><h1>จัดการข้อมูลคลังข้อสอบ</h1></div>
 <div class="container border border-secondary rounded">
     <h2 class="my-4">ฟอร์มเพิ่มคำถาม</h2>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <form action="{{url_for('exambank')}}" method="POST">
         <div class="form-group">
             <label for="question">คำถาม</label>
@@ -55,6 +66,10 @@
                 <p>D: {{q.5}}</p>
                 <p>Difficulty: {{q.6}}</p>
                 <p>Answer: {{q.7}}</p>
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="" class="btn btn-primary" type="button">Edit</a>
+                    <a href="/deleteQ/{{q.0}}" onclick="return confirm('Are You Sure Want To Deleted ?')" class="btn btn-danger" type="button">Delete</a>
+                </div>
             </li>
     </ul>
     {% endfor %}

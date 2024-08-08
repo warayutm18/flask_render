@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect, url_for,session
+from flask import Flask,render_template,request,redirect, url_for,session,flash
 import mysql.connector
 import os
 
@@ -13,6 +13,10 @@ mydb = mysql.connector.connect(
     password="wmrvJFQd69gb7FOGZnMy",
     database="bkmrzjuc0txca2pggcfn"
 )
+
+@app.route("/index")
+def index():
+    return render_template ("index.html")
 
 @app.route("/admin")
 def admin():
@@ -39,6 +43,7 @@ def exambank():
         try:
             mycursor.execute(query, values)
             mydb.commit()
+            flash("Add questions successfully")
             print("Data inserted successfully.")
         except mysql.connector.Error as err:
             print("Something went wrong: {}".format(err))
@@ -63,12 +68,40 @@ def login():
         if user:
             session['username'] = username
             return redirect(url_for('admin'))
-
-
-        
+        else:
+            mycursor.execute("SELECT * FROM students WHERE username = %s and password = %s",(username,password))
+            user2 = mycursor.fetchone()
+            if user2:
+                session['username'] = username
+                return redirect(url_for('index'))
     return render_template('login.html')
 
+@app.route("/deleteQ/<int:id_data>", methods = ['GET'])
+def deleteQ(id_data):
+    if request.method == 'GET':
+        mycursor = mydb.cursor()
+        query = "DELETE FROM examQ WHERE id=%s"
+        try:
+            mycursor.execute(query, (id_data,))
+            mydb.commit()
+            print("Data inserted successfully.")
+        except mysql.connector.Error as err:
+            print("Something went wrong: {}".format(err))
+    
+    return redirect(url_for("exambank"))
+
+@app.route("/engskill")
+def engskill():
+    return render_template("engskill.html")
 
 
+@app.route('/quiz', methods=['GET', 'POST'])
+def quiz():
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM examQ")
+    fetchdata = mycursor.fetchall()
+    return render_template('quiz.html', q_data=fetchdata)
+
+    
 if __name__== "__main__":
     app.run(debug=True)
