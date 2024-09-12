@@ -1,0 +1,147 @@
+{% extends "layoutadmin.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
+<script>$(document).ready(function() {
+  $('#example thead tr').clone(true).appendTo( '#example thead' );
+  $('#example thead tr:eq(1) th').each( function (i) {
+      var title = $(this).text();
+      $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+
+      $( 'input', this ).on( 'keyup change', function () {
+          if ( table.column(i).search() !== this.value ) {
+              table
+                  .column(i)
+                  .search( this.value )
+                  .draw();
+          }
+      } );
+  } );
+
+  var table = $('#example').DataTable( {
+      orderCellsTop: true,
+      fixedHeader: true,
+      "language": {
+      "info": "แสดงผล _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ"
+  }
+  } );
+} );</script>
+
+<style>
+  tfoot input {
+      width: 100%;
+      padding: 3px;
+      box-sizing: border-box;
+  }
+</style>
+<div style="text-align: center;"><h1>ข้อมูลทักษะภาษาอังกฤษ</h1></div>
+
+<div class="container-fluid border">
+<table class="table table-striped ">
+    <thead class="table-light">
+      <tr class="table-warning">
+        <th scope="col">ปีที่เข้า</th>
+        <th scope="col">A1</th>
+        <th scope="col">A2</th>
+        <th scope="col">B1</th>
+        <th scope="col">B2</th>
+        <th scope="col">C1</th>
+        <th scope="col">C2</th>
+        <th scope="col">ผลรวมทั้งหมด</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">64</th>
+            <td>7</td>
+            <td>830</td>
+            <td>141</td>
+            <td>8</td>
+            <td>-</td>
+            <td>-</td>
+            <td>986</td>
+          </tr>
+          <tr>
+            <th scope="row">65</th>
+            <td>2</td>
+            <td>369</td>
+            <td>388</td>
+            <td>56</td>
+            <td>19</td>
+            <td>1</td>
+            <td>835</td>
+          </tr>
+          <tr>
+            <th scope="row">66</th>
+            <td>10</td>
+            <td>1183</td>
+            <td>116</td>
+            <td>10</td>
+            <td>1</td>
+            <td>-</td>
+            <td>1320</td>
+          </tr>
+          <tr>
+            <th scope="row">67</th>
+            <td>7</td>
+            <td>825</td>
+            <td>480</td>
+            <td>59</td>
+            <td>7</td>
+            <td>1</td>
+            <td>1379</td>
+          </tr>
+          <tr>
+            <th scope="row">ผลรวมทั้งหมด</th>
+            <td>26</td>
+            <td>3207</td>
+            <td>1125</td>
+            <td>133</td>
+            <td>27</td>
+            <td>2</td>
+            <td>4520</td>
+          </tr>
+    </tbody>
+  </table>
+</div>
+<br>
+<div class="container-fluid border">
+  <table id="example" class="display" style="width:100%">
+  <thead>
+      <tr>
+          <!-- หัวตาราง สามารถปรับแก้ได้ตามข้อมูลที่ได้รับ -->
+          <th>รหัสนักศึกษา</th>
+          <th>ชื่อ นามสกุล</th>
+          <th>คะแนน</th>
+          <th>ระดับทักษะ</th>
+          <th>คณะ</th>
+          <th>สาขา</th>
+      </tr>
+  </thead>
+  <tbody>
+      {% for item in data %}
+          <tr>
+              <td>{{ item['student_id'] }}</td>
+              <td>{{ item['full_name'] }}</td>
+              <td>{{ item['score_ept']}}</td>
+              <td>{{ item['group_'] }}</td>
+              <td>{{ item['fac_name_th'] }}</td>
+              <td>{{ item['program_name_th'] }}</td>
+          </tr>
+      {% endfor %}
+  </tbody>
+  <tfoot>
+      <tr>
+          <th>รหัสนักศึกษา</th>
+          <th>ชื่อ นามสกุล</th>
+          <th>คะแนน</th>
+          <th>ระดับทักษะ</th>
+          <th>คณะ</th>
+          <th>สาขา</th>
+      </tr>
+  </tfoot>
+</table>
+</div>
+{% endblock %}

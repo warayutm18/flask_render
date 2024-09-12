@@ -2,19 +2,39 @@
 
 {% block content %}
 <div class="container mt-5 border">
-<h1>Quiz</h1>
+    <h1 class="text-center mb-4">แบบทดสอบทักษะภาษาอังกฤษ</h1>
+    <h4>Listening Skill </h4>
+    <h5>Part 1 Photos (Questions No. 1-5)</h5>
+    <p><b>Directions:</b> For each question in this part, you will hear four statements about a picture. After hearing the statements, you must choose the one that best describes what you see in the picture. The statements will not be printed in your test book and will be spoken only once.  </p>
 <form method="post">
     {% for question in q_data %}
     <div>
-        <p><strong>{{ question.1}}</strong></p>
+        <p><strong>{{ loop.index }}: {{ question.1 }}</strong></p>
+        <!-- เพิ่มการแสดงรูปภาพที่เกี่ยวข้อง -->
+        {% if question.8 %}
+        <div>
+            <img src="{{ url_for('static', filename='uploads/' + question.8) }}" class="img-thumbnail img-fluid" alt="Question Image">
+        </div>
+        {% endif %}
         <input type="radio" name="q_{{ question.0 }}" value="A" required> {{ question.2 }}<br>
         <input type="radio" name="q_{{ question.0 }}" value="B" required> {{ question.3 }}<br>
         <input type="radio" name="q_{{ question.0 }}" value="C" required> {{ question.4 }}<br>
         <input type="radio" name="q_{{ question.0 }}" value="D" required> {{ question.5 }}<br>
     </div>
     {% endfor %}
-    <button type="submit">Submit</button>
+
 </form>
-<a href="">Next Page</a>
+
+<!-- ปุ่มย้อนกลับและถัดไป -->
+<div class="d-grid gap-2 d-md-block">
+    {% if prev_page %}
+    <a href="{{ url_for('quiz', page=prev_page) }}" class="btn btn-primary">ย้อนกลับ</a>
+    {% endif %}
+
+    {% if next_page %}
+    <a href="{{ url_for('quiz', page=next_page) }}" class="btn btn-primary">ถัดไป</a>
+    {% endif %}
+</div>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end"><button class="btn btn-success" type="submit">Submit</button></div>
 </div>
 {% endblock %}

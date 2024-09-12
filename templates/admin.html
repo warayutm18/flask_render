@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>หน้าหลัก แอดมิน</h1>
-{{data}}
+
 <div class="row">
   <div class="col-sm-6 mb-3 mb-sm-0">
       <div class="card bg-light">
@@ -16,6 +16,18 @@
           </div>
         </div>
   </div>
+  <div class="col-sm-6">
+    <div class="card">
+        <div class="card-header text-white" style="background-color: #3451a1;">
+          Featured
+        </div>
+        <div class="card-body">
+          <h4 class="card-title">ข้อมูลทักษะภาษาอังกฤษของนักศึกษา</h4>
+          <p class="card-text"></p>
+          <a href="{{ url_for('eng_data')}}" class="btn btn-primary">Go </a>
+        </div>
+      </div>
+</div>
 </div>
 
 

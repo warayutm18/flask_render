@@ -15,7 +15,7 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    <form action="{{url_for('exambank')}}" method="POST">
+    <form action="{{url_for('exambank')}}" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="question">คำถาม</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="question"></textarea>
@@ -48,6 +48,12 @@
             <label for="answer">คำตอบ</label>
             <input type="text" class="form-control" id="answer" name="answer" required>
         </div>
+
+        <!-- เพิ่ม input สำหรับการอัปโหลดรูปภาพ -->
+        <div class="form-group">
+            <label for="image">อัปโหลดรูปภาพ</label>
+            <input type="file" class="form-control" id="image" name="image">
+        </div>
         <button type="submit" class="btn btn-primary">บันทึกข้อมูล</button>
         <button type="reset" class="btn btn-secondary">ยกเลิก</button>
     </form>
@@ -59,21 +65,96 @@
     {% for q in q_data %}
     <ul class="list-group">
             <li class="list-group-item">
-                <h5>Question: {{q.1}}</h5>
+                <h5>{{ loop.index }} :Question: {{q.1}}</h5>
                 <p>A: {{q.2}}</p>
                 <p>B: {{q.3}}</p>
                 <p>C: {{q.4}}</p>
                 <p>D: {{q.5}}</p>
                 <p>Difficulty: {{q.6}}</p>
                 <p>Answer: {{q.7}}</p>
+
+                <!-- เพิ่มการแสดงรูปภาพที่เกี่ยวข้อง -->
+                {% if q.8 %}
+                <div>
+                    <img src="{{ url_for('static', filename='uploads/' + q.8) }}" alt="Question Image" width="350">
+                </div>
+                {% endif %}
+
                 <div class="d-grid gap-2 d-md-block">
-                    <a href="" class="btn btn-primary" type="button">Edit</a>
+                    <a href="/updateQ/{{q.0}}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#q_edit{{q.0}}">Edit</a>
                     <a href="/deleteQ/{{q.0}}" onclick="return confirm('Are You Sure Want To Deleted ?')" class="btn btn-danger" type="button">Delete</a>
                 </div>
             </li>
     </ul>
     {% endfor %}
 </div>
-
+{% for q in q_data %}
+  <!-- The Modal -->
+<div class="modal" id="q_edit{{q.0}}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Update Questions</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+            <form action="{{url_for('updateQ')}}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="{{q.0}}">
+                <div class="form-group">
+                    <label for="question">คำถาม</label>
+                    <textarea value="{{q.1}}" class="form-control" id="exampleFormControlTextarea1" rows="3" name="question"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="option_a">ตัวเลือก A</label>
+                    <input value="{{q.2}}" type="text" class="form-control" id="option_a" name="option_a" required>
+                </div>
+                <div class="form-group">
+                    <label for="option_b">ตัวเลือก B</label>
+                    <input value="{{q.3}}" type="text" class="form-control" id="option_b" name="option_b" required>
+                </div>
+                <div class="form-group">
+                    <label for="option_c">ตัวเลือก C</label>
+                    <input value="{{q.4}}" type="text" class="form-control" id="option_c" name="option_c" required>
+                </div>
+                <div class="form-group">
+                    <label for="option_d">ตัวเลือก D</label>
+                    <input value="{{q.5}}" type="text" class="form-control" id="option_d" name="option_d" required>
+                </div>
+                <div class="form-group">
+                    <label for="difficulty">ระดับความยาก</label>
+                    <select class="form-control" id="difficulty" name="difficulty" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="answer">คำตอบ</label>
+                    <input value="{{q.7}}" type="text" class="form-control" id="answer" name="answer" required>
+                </div>
+        
+                <!-- เพิ่ม input สำหรับการอัปโหลดรูปภาพ -->
+                <div class="form-group">
+                    <label for="image">อัปโหลดรูปภาพ</label>
+                    <input value="{{q.8}}" type="file" class="form-control" id="image" name="image">
+                </div>
+                <button type="submit" class="btn btn-success mb-2">Update</button>
+            </form>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+<p>Total Questions: {{ total_questions }}</p>
 
 {% endblock %}
