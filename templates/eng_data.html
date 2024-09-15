@@ -37,7 +37,7 @@
   }
 </style>
 <div style="text-align: center;"><h1>ข้อมูลทักษะภาษาอังกฤษ</h1></div>
-
+ {{group_sums}} {{group_counts}} 
 <div class="container-fluid border">
 <table class="table table-striped ">
     <thead class="table-light">
@@ -55,93 +55,94 @@
     <tbody>
         <tr>
             <th scope="row">64</th>
-            <td>7</td>
-            <td>830</td>
-            <td>141</td>
-            <td>8</td>
-            <td>-</td>
-            <td>-</td>
-            <td>986</td>
+            <td>{{ group_counts['count64_A1'] }}</td>
+            <td>{{ group_counts['count64_A2'] }}</td>
+            <td>{{ group_counts['count64_B1'] }}</td>
+            <td>{{ group_counts['count64_B2'] }}</td>
+            <td>{{ group_counts['count64_C1'] }}</td>
+            <td>{{ group_counts['count64_C2'] }}</td>
+            <td>{{sumall_64}}</td>
           </tr>
           <tr>
             <th scope="row">65</th>
-            <td>2</td>
-            <td>369</td>
-            <td>388</td>
-            <td>56</td>
-            <td>19</td>
-            <td>1</td>
-            <td>835</td>
+            <td>{{ group_counts['count65_A1'] }}</td>
+            <td>{{ group_counts['count65_A2'] }}</td>
+            <td>{{ group_counts['count65_B1'] }}</td>
+            <td>{{ group_counts['count65_B2'] }}</td>
+            <td>{{ group_counts['count65_C1'] }}</td>
+            <td>{{ group_counts['count65_C2'] }}</td>
+            <td>{{sumall_65}}</td>
           </tr>
           <tr>
             <th scope="row">66</th>
-            <td>10</td>
-            <td>1183</td>
-            <td>116</td>
-            <td>10</td>
-            <td>1</td>
-            <td>-</td>
-            <td>1320</td>
+            <td>{{ group_counts['count66_A1'] }}</td>
+            <td>{{ group_counts['count66_A2'] }}</td>
+            <td>{{ group_counts['count66_B1'] }}</td>
+            <td>{{ group_counts['count66_B2'] }}</td>
+            <td>{{ group_counts['count66_C1'] }}</td>
+            <td>{{ group_counts['count66_C2'] }}</td>
+            <td>{{sumall_66}}</td>
           </tr>
           <tr>
             <th scope="row">67</th>
-            <td>7</td>
-            <td>825</td>
-            <td>480</td>
-            <td>59</td>
-            <td>7</td>
-            <td>1</td>
-            <td>1379</td>
+            <td>{{ group_counts['count67_A1'] }}</td>
+            <td>{{ group_counts['count67_A2'] }}</td>
+            <td>{{ group_counts['count67_B1'] }}</td>
+            <td>{{ group_counts['count67_B2'] }}</td>
+            <td>{{ group_counts['count67_C1'] }}</td>
+            <td>{{ group_counts['count67_C2'] }}</td>
+            <td>{{sumall_67}}</td>
           </tr>
           <tr>
             <th scope="row">ผลรวมทั้งหมด</th>
-            <td>26</td>
-            <td>3207</td>
-            <td>1125</td>
-            <td>133</td>
-            <td>27</td>
-            <td>2</td>
-            <td>4520</td>
+            <td>{{ group_sums['sum_A1'] }}</td>
+            <td>{{ group_sums['sum_A2'] }}</td>
+            <td>{{ group_sums['sum_B1'] }}</td>
+            <td>{{ group_sums['sum_B2'] }}</td>
+            <td>{{ group_sums['sum_C1'] }}</td>
+            <td>{{ group_sums['sum_C2'] }}</td>
+            <td>{{sumall}}</td>
           </tr>
     </tbody>
   </table>
 </div>
 <br>
 <div class="container-fluid border">
-  <table id="example" class="display" style="width:100%">
-  <thead>
-      <tr>
-          <!-- หัวตาราง สามารถปรับแก้ได้ตามข้อมูลที่ได้รับ -->
+  <div class="table-responsive">
+    <table id="example" class="display table table-striped" style="width:100%">
+      <thead>
+        <tr>
+          <th scope="col">รหัสนักศึกษา</th>
+          <th scope="col">ชื่อ นามสกุล</th>
+          <th scope="col">คะแนน</th>
+          <th scope="col">ระดับทักษะ</th>
+          <th scope="col">คณะ</th>
+          <th scope="col">สาขา</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+        <tr>
+          <td>{{ item['student_id'] }}</td>
+          <td>{{ item['full_name'] }}</td>
+          <td>{{ item['score_ept']}}</td>
+          <td>{{ item['group_'] }}</td>
+          <td>{{ item['fac_name_th'] }}</td>
+          <td>{{ item['program_name_th'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
           <th>รหัสนักศึกษา</th>
           <th>ชื่อ นามสกุล</th>
           <th>คะแนน</th>
           <th>ระดับทักษะ</th>
           <th>คณะ</th>
           <th>สาขา</th>
-      </tr>
-  </thead>
-  <tbody>
-      {% for item in data %}
-          <tr>
-              <td>{{ item['student_id'] }}</td>
-              <td>{{ item['full_name'] }}</td>
-              <td>{{ item['score_ept']}}</td>
-              <td>{{ item['group_'] }}</td>
-              <td>{{ item['fac_name_th'] }}</td>
-              <td>{{ item['program_name_th'] }}</td>
-          </tr>
-      {% endfor %}
-  </tbody>
-  <tfoot>
-      <tr>
-          <th>รหัสนักศึกษา</th>
-          <th>ชื่อ นามสกุล</th>
-          <th>คะแนน</th>
-          <th>ระดับทักษะ</th>
-          <th>คณะ</th>
-          <th>สาขา</th>
-      </tr>
-  </tfoot>
-</table>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 {% endblock %}

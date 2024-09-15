@@ -3,38 +3,130 @@
 {% block content %}
 <div class="container mt-5 border">
     <h1 class="text-center mb-4">แบบทดสอบทักษะภาษาอังกฤษ</h1>
-    <h4>Listening Skill </h4>
-    <h5>Part 1 Photos (Questions No. 1-5)</h5>
-    <p><b>Directions:</b> For each question in this part, you will hear four statements about a picture. After hearing the statements, you must choose the one that best describes what you see in the picture. The statements will not be printed in your test book and will be spoken only once.  </p>
-<form method="post">
-    {% for question in q_data %}
-    <div>
-        <p><strong>{{ loop.index }}: {{ question.1 }}</strong></p>
-        <!-- เพิ่มการแสดงรูปภาพที่เกี่ยวข้อง -->
-        {% if question.8 %}
-        <div>
-            <img src="{{ url_for('static', filename='uploads/' + question.8) }}" class="img-thumbnail img-fluid" alt="Question Image">
-        </div>
-        {% endif %}
-        <input type="radio" name="q_{{ question.0 }}" value="A" required> {{ question.2 }}<br>
-        <input type="radio" name="q_{{ question.0 }}" value="B" required> {{ question.3 }}<br>
-        <input type="radio" name="q_{{ question.0 }}" value="C" required> {{ question.4 }}<br>
-        <input type="radio" name="q_{{ question.0 }}" value="D" required> {{ question.5 }}<br>
+
+    <!-- ปุ่มเริ่มต้นข้อสอบ -->
+    <div id="start-container" class="text-center" {% if 'start_time' in session %}style="display:none;" {% endif %}>
+        <button id="start-btn" class="btn btn-primary">เริ่มทำข้อสอบ</button>
     </div>
-    {% endfor %}
 
-</form>
+    <!-- ตัวจับเวลา -->
+    <div id="timer-container" class="text-end" {% if 'start_time' not in session %}style="display:none;" {% endif %}>
+        <h3>เวลาที่เหลือ: <span id="timer">{{ remaining_time }}</span></h3>
+    </div>
 
-<!-- ปุ่มย้อนกลับและถัดไป -->
-<div class="d-grid gap-2 d-md-block">
-    {% if prev_page %}
-    <a href="{{ url_for('quiz', page=prev_page) }}" class="btn btn-primary">ย้อนกลับ</a>
+    <div id="quiz-container" {% if 'start_time' not in session %}style="display:none;" {% endif %}>
+        <h4>Listening Skill </h4>
+        <h5>Part 1 </h5>
+        <p><b>Directions:</b> For each question in this part, you will hear four statements about a picture. After
+            hearing the statements, you must choose the one that best describes what you see in the picture. The
+            statements will not be printed in your test book and will be spoken only once. </p>
+        <form method="post" id="quiz-form">
+            {% for question in q_data %}
+            <div>
+                <p><strong>{{ loop.index + ((current_page - 1) * 5) }}: {{ question.1 }}</strong>
+                    {% if question.9 %}
+                    <button id="play-btn-{{question.0}}" class="btn btn-light" onclick="playAudio('{{question.0}}')">
+                        <img src="{{ url_for('static', filename='icons/speaker-icon.png') }}" alt="Play Audio"
+                            width="32">
+                    </button>
+                    <audio id="audio-{{question.0}}" src="{{ url_for('static', filename='uploads/' + question.9) }}"
+                        type="audio/mpeg"></audio>
+                    {% endif %}
+                </p>
+                {% if question.8 %}
+                <div>
+                    <img src="{{ url_for('static', filename='uploads/' + question.8) }}" class="img-thumbnail img-fluid"
+                        alt="Question Image">
+                </div>
+
+
+                {% endif %}
+                <input type="radio" name="q_{{ question.0 }}" value="{{ question.2 }}" {% if session.get('answer_' ~
+                    question.0)==question.2 %}checked{% endif %} required> {{ question.2 }}<br>
+                <input type="radio" name="q_{{ question.0 }}" value="{{ question.3 }}" {% if session.get('answer_' ~
+                    question.0)==question.3 %}checked{% endif %} required> {{ question.3 }}<br>
+                <input type="radio" name="q_{{ question.0 }}" value="{{ question.4 }}" {% if session.get('answer_' ~
+                    question.0)==question.4 %}checked{% endif %} required> {{ question.4 }}<br>
+                <input type="radio" name="q_{{ question.0 }}" value="{{ question.5 }}" {% if session.get('answer_' ~
+                    question.0)==question.5 %}checked{% endif %} required> {{ question.5 }}<br>
+            </div>
+            {% endfor %}
+            <div class="d-grid gap-2 d-md-block">
+                {% if prev_page %}
+                <button type="submit" name="action" value="prev" class="btn btn-primary">ย้อนกลับ</button>
+                {% endif %}
+
+                {% if next_page %}
+                <button type="submit" name="action" value="next" class="btn btn-primary">ถัดไป</button>
+                {% endif %}
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-success" type="submit" name="action" value="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // ตรวจสอบว่าข้อสอบเริ่มแล้วหรือยัง
+    {% if 'start_time' in session %}
+    startQuiz();
     {% endif %}
 
-    {% if next_page %}
-    <a href="{{ url_for('quiz', page=next_page) }}" class="btn btn-primary">ถัดไป</a>
-    {% endif %}
-</div>
-<div class="d-grid gap-2 d-md-flex justify-content-md-end"><button class="btn btn-success" type="submit">Submit</button></div>
-</div>
+    document.getElementById('start-btn').addEventListener('click', function () {
+        startQuiz();
+    });
+
+    function startQuiz() {
+        // ซ่อนปุ่มเริ่มและแสดงข้อสอบพร้อมตัวจับเวลา
+        document.getElementById('start-container').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('timer-container').style.display = 'block';
+
+        // นับถอยหลังจากเวลาที่เหลือ
+        let time = {{ remaining_time.total_seconds() | round
+    }};
+    const timerElement = document.getElementById('timer');
+
+    const countdown = setInterval(function () {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        // แสดงเวลาที่เหลือ
+        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        // เมื่อหมดเวลา
+        if (time <= 0) {
+            clearInterval(countdown);
+            document.getElementById('quiz-form').submit(); // ส่งฟอร์มอัตโนมัติ
+        }
+        time--;
+    }, 1000); // นับถอยหลังทุก 1 วินาที
+    }
+
+    // ตัวแปรสำหรับเก็บจำนวนครั้งที่กดฟังเสียง
+    let playCount = {};
+
+    function playAudio(questionId) {
+        const audioElement = document.getElementById(`audio-${questionId}`);
+        const playButton = document.getElementById(`play-btn-${questionId}`);
+
+        // ถ้าไม่มีค่าเริ่มต้น ให้ตั้งค่าเป็น 0 ครั้ง
+        if (!playCount[questionId]) {
+            playCount[questionId] = 0;
+        }
+
+        // ถ้ากดฟังเสียงยังไม่ถึง 2 ครั้ง
+        if (playCount[questionId] < 2) {
+            audioElement.play();
+            playCount[questionId]++;
+
+            // ถ้ากดฟังครบ 2 ครั้ง ให้ปิดการใช้งานปุ่ม
+            if (playCount[questionId] >= 2) {
+                playButton.disabled = true;
+                playButton.classList.add("disabled");
+            }
+        }
+    }
+</script>
 {% endblock %}

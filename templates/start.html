@@ -1,0 +1,44 @@
+{% extends "indexlayout.html" %}
+
+{% block content %}
+<style>
+    .center {
+        text-align: center;
+        border: 3px solid green;
+        border-radius: 10px;
+    }
+
+    .text_center {
+        text-align: center;
+    }
+
+    .stquizAA {
+        text-align: left;
+        border: 1px solid rgb(1, 5, 10);
+        border-radius: 3px;
+    }
+</style>
+<h2 class="text_center">รายละเอียดการสอบ</h2>
+<div class="container mt-5 text-center">
+    <div class="row align-items-center">
+        <div class="stquizAA">
+            <h4>คำชี้แจง:</h4>
+            <p>each question in this part, you will hear four statements about a picture. After hearing the statements,
+                you must choose the one that best describes what you see in the picture. The statements will not be
+                printed in your test book and will be spoken only once.
+                You will hear a question or statement and four responses spoken only once.Choose the best response to
+                each question or statement and mark the answer on your answer sheet.
+                You will hear some conversations between two people. You will be asked to answer two or four questions
+                about what the speakers say in each conversation. Choose the best response to each question and mark the
+                answer on your answer sheet.
+
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{{ url_for('quiz') }}" class="btn btn-success me-md-2">เริ่มทำข้อสอบ</a>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}
