@@ -227,7 +227,7 @@ def quiz():
     has_taken_test = mycursor.fetchone()[0]
 
     if has_taken_test:
-        return redirect(url_for('result'))
+        return redirect(url_for('exam_result'))
 
     # ตรวจสอบว่ามีการเริ่มทำข้อสอบแล้วหรือยัง ถ้าไม่ให้ไปยังหน้าที่มีปุ่มเริ่มทำข้อสอบ
     if 'start_time' not in session:
@@ -326,6 +326,7 @@ def result():
     # บันทึกสถานะการสอบ
     mycursor.execute("UPDATE students SET has_taken_test = TRUE WHERE std_id = %s", (user_id,))
     mydb.commit()
+
     # ดึงข้อมูลคำถามทั้งหมด
     mycursor.execute("SELECT * FROM examQ")
     fetchdata = mycursor.fetchall()
@@ -344,17 +345,47 @@ def result():
 
     # ดึงข้อมูลชื่อและนามสกุลของผู้ใช้จากฐานข้อมูล
     username = session['username']
-    mycursor.execute("SELECT std_id,firstname, lastname,faculty,major FROM students WHERE username = %s", (username,))
+    mycursor.execute("SELECT std_id, firstname, lastname, faculty, major FROM students WHERE username = %s", (username,))
     user_info = mycursor.fetchone()
 
     if user_info:
-        std_id,firstname, lastname ,faculty,major = user_info
+        std_id, firstname, lastname, faculty, major = user_info
 
-        # บันทึกคะแนนลงในฐานข้อมูล (สามารถใช้ตาราง students หรือสร้างตารางใหม่)
-        mycursor.execute("UPDATE students SET engscore = %s WHERE username = %s", (score, username))
+        # บันทึกคะแนนลงในตารางใหม่ (เช่น exam_results)
+        mycursor.execute(
+            "INSERT INTO exam_results (std_id, score, exam_date) VALUES (%s, %s, NOW())",
+            (std_id, score)
+        )
         mydb.commit()
         
     # แสดงผลคะแนน
-    return render_template('result.html', score=score, total_questions=total_questions, firstname=firstname, lastname=lastname,faculty = faculty,major = major,std_id= std_id)
+    return render_template('result.html', score=score, total_questions=total_questions, firstname=firstname, lastname=lastname, faculty=faculty, major=major, std_id=std_id)
+
+@app.route('/exam_result')
+def exam_result():
+    mycursor = mydb.cursor()
+
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    
+
+     # ดึงข้อมูลชื่อและนามสกุลของผู้ใช้จากฐานข้อมูล
+    username = session['username']
+    mycursor.execute("SELECT std_id, firstname, lastname, faculty, major FROM students WHERE username = %s", (username,))
+    user_info = mycursor.fetchone()
+
+    # ดึงข้อมูลคำถามทั้งหมด
+    mycursor.execute("SELECT * FROM examQ")
+    fetchdata = mycursor.fetchall()
+
+    mycursor.execute("SELECT score FROM exam_results WHERE std_id = %s", (username,))
+    score = mycursor.fetchone()[0]
+    
+    total_questions = len(fetchdata)
+    if user_info:
+        std_id, firstname, lastname, faculty, major = user_info
+    return render_template('exam_result.html', score=score, total_questions=total_questions, firstname=firstname, lastname=lastname, faculty=faculty, major=major, std_id=std_id)
 if __name__== "__main__":
     app.run(debug=True)
