@@ -16,7 +16,10 @@ mydb = mysql.connector.connect(
     database="bkmrzjuc0txca2pggcfn"
 )
 
-
+@app.route('/logout')
+def logout():
+    session.pop('username', None)  # ลบข้อมูล user จาก session
+    return redirect(url_for('login'))
 
 @app.route("/index")
 def index():
