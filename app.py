@@ -2,6 +2,8 @@ from flask import Flask,render_template,request,redirect, url_for,session,flash,
 import mysql.connector
 import os
 import requests
+import csv
+import pandas as pd
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -37,6 +39,40 @@ def admin():
     mycursor.close()
 
     return render_template('admin.html',data = fetchdata)
+
+@app.route("/m_admin", methods=["GET", "POST"])
+def m_admin():
+    mycursor = mydb.cursor()
+    
+    # ตรวจสอบว่ามีการส่งข้อมูลเพื่อเพิ่มแอดมินใหม่หรือไม่
+    if request.method == "POST":
+        if "add_admin" in request.form:
+            admin_username = request.form["admin_username"]
+            admin_password = request.form["admin_password"]
+            sql = "INSERT INTO admin (username, password) VALUES (%s, %s)"
+            val = (admin_username, admin_password)
+            mycursor.execute(sql, val)
+            mydb.commit()
+        elif "edit_admin" in request.form:
+            admin_id = request.form["admin_id"]
+            admin_username = request.form["admin_username"]
+            admin_password = request.form["admin_password"]
+            sql = "UPDATE admin SET username = %s, password = %s WHERE id = %s"
+            val = (admin_username, admin_password, admin_id)
+            mycursor.execute(sql, val)
+            mydb.commit()
+        elif "delete_admin" in request.form:
+            admin_id = request.form["admin_id"]
+            sql = "DELETE FROM admin WHERE id = %s"
+            mycursor.execute(sql, (admin_id,))
+            mydb.commit()
+    
+    # ดึงข้อมูลแอดมินทั้งหมดจากฐานข้อมูล
+    mycursor.execute("SELECT * FROM admin")
+    fetchdata = mycursor.fetchall()
+    mycursor.close()
+
+    return render_template('m_admin.html', data=fetchdata)
 
 @app.route("/exambank", methods=['POST', 'GET'])
 def exambank():
@@ -394,5 +430,42 @@ def exam_result():
     if user_info:
         std_id, firstname, lastname, faculty, major = user_info
     return render_template('exam_result.html', score=score, total_questions=total_questions, firstname=firstname, lastname=lastname, faculty=faculty, major=major, std_id=std_id)
+
+@app.route('/edt_data')
+def edt_data():
+    # อ่านข้อมูลจากไฟล์ CSV
+    df = pd.read_csv('data/data.csv')
+
+    # ดึงข้อมูลจากคอลัมน์ที่ต้องการ เช่น 'ปีการศึกษา', 'คณะ', 'นักศึกษาทั้งหมด'
+    column1_data = df['ปีการศึกษา'].tolist()  # แปลงคอลัมน์เป็น list
+    column2_data = df['คณะ'].tolist()
+
+    rows = df.iterrows()
+
+    # แปลงข้อมูลแถวเป็นลิสต์ของแถวที่เป็นลิสต์หรือดิกชันนารี
+    row_data = [row[1].to_dict() for row in rows]
+
+    # ฟังก์ชันสำหรับคำนวณค่าผลรวม
+    def get_totals(df, year, faculty):
+        total_students = df[(df['ปีการศึกษา'] == year) & (df['คณะ'] == faculty)]['นักศึกษาทั้งหมด'].sum()
+        total_regis = df[(df['ปีการศึกษา'] == year) & (df['คณะ'] == faculty)]['ลงทะเบียน'].sum()
+        total_passed = df[(df['ปีการศึกษา'] == year) & (df['คณะ'] == faculty)]['สอบผ่าน'].sum()
+        return total_students, total_regis, total_passed
+
+    # คำนวณค่าผลรวมสำหรับแต่ละคณะในปี 2565 และ 2566
+    faculties = ['วิทยาศาสตร์และเทคโนโลยี', 'ครุศาสตร์', 'วิทยาการจัดการ', 'เทคโนโลยีการเกษตร', 'เทคโนโลยีอุตสาหกรรม']
+    faculty_totals = {faculty: {'2565': get_totals(df, 2565, faculty), '2566': get_totals(df, 2566, faculty)} for faculty in faculties}
+
+    
+
+    # ส่งข้อมูลไปยังหน้า HTML
+    return render_template('edt_data.html', 
+                           column1=column1_data,
+                           column2=column2_data, 
+                           rows=row_data, 
+                           faculty_totals=faculty_totals)
+
+    
+
 if __name__== "__main__":
     app.run(debug=True)

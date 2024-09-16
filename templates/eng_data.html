@@ -1,46 +1,103 @@
 {% extends "layoutadmin.html" %}
 
 {% block content %}
+<!-- Add Bootstrap for better table styling -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
-<script>$(document).ready(function() {
-  $('#example thead tr').clone(true).appendTo( '#example thead' );
-  $('#example thead tr:eq(1) th').each( function (i) {
-      var title = $(this).text();
-      $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
 
-      $( 'input', this ).on( 'keyup change', function () {
-          if ( table.column(i).search() !== this.value ) {
-              table
-                  .column(i)
-                  .search( this.value )
-                  .draw();
-          }
-      } );
-  } );
+<!-- DataTable with search and fixed header -->
+<script>
+  $(document).ready(function() {
+    $('#example thead tr').clone(true).appendTo( '#example thead' );
+    $('#example thead tr:eq(1) th').each( function (i) {
+        var title = $(this).text();
+        $(this).html( '<input type="text" class="form-control form-control-sm" placeholder="Search '+title+'" />' );
 
-  var table = $('#example').DataTable( {
-      orderCellsTop: true,
-      fixedHeader: true,
-      "language": {
-      "info": "แสดงผล _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ"
-  }
-  } );
-} );</script>
+        $( 'input', this ).on( 'keyup change', function () {
+            if ( table.column(i).search() !== this.value ) {
+                table
+                    .column(i)
+                    .search( this.value )
+                    .draw();
+            }
+        });
+    });
+
+    var table = $('#example').DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        "language": {
+            "info": "แสดงผล _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
+            "paginate": {
+              "previous": "ก่อนหน้า",
+              "next": "ถัดไป"
+            },
+        },
+        "pagingType": "full_numbers",
+        "lengthMenu": [10, 25, 50, 100]
+    });
+  });
+</script>
 
 <style>
+  /* Add padding and make table full width */
+  .container-fluid {
+      margin: 20px auto;
+  }
+  
+  h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+  }
+
+  table {
+      font-size: 0.95rem;
+      text-align: center;
+  }
+
+  /* Style the header row */
+  thead th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      padding: 10px;
+  }
+
+  /* Alternate row colors */
+  tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+
+  /* Footer search bar style */
   tfoot input {
       width: 100%;
-      padding: 3px;
+      padding: 5px;
       box-sizing: border-box;
   }
+
+  /* Add hover effect */
+  tbody tr:hover {
+      background-color: #e9ecef;
+  }
+
+  /* Style table in the second section */
+  .table-striped tbody tr:nth-of-type(odd) {
+      background-color: rgba(0, 0, 0, 0.05);
+  }
 </style>
-<div style="text-align: center;"><h1>ข้อมูลทักษะภาษาอังกฤษ</h1></div>
-<div class="container-fluid border">
-<table class="table table-striped ">
-    <thead class="table-light">
-      <tr class="table-warning">
+
+<div class="container text-center">
+  <h1>ข้อมูลทักษะภาษาอังกฤษ</h1>
+</div>
+
+<div class="container-fluid border rounded p-3 bg-light shadow-sm">
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
         <th scope="col">ปีที่เข้า</th>
         <th scope="col">A1</th>
         <th scope="col">A2</th>
@@ -52,64 +109,67 @@
       </tr>
     </thead>
     <tbody>
-        <tr>
-            <th scope="row">64</th>
-            <td>{{ group_counts['count64_A1'] }}</td>
-            <td>{{ group_counts['count64_A2'] }}</td>
-            <td>{{ group_counts['count64_B1'] }}</td>
-            <td>{{ group_counts['count64_B2'] }}</td>
-            <td>{{ group_counts['count64_C1'] }}</td>
-            <td>{{ group_counts['count64_C2'] }}</td>
-            <td>{{sumall_64}}</td>
-          </tr>
-          <tr>
-            <th scope="row">65</th>
-            <td>{{ group_counts['count65_A1'] }}</td>
-            <td>{{ group_counts['count65_A2'] }}</td>
-            <td>{{ group_counts['count65_B1'] }}</td>
-            <td>{{ group_counts['count65_B2'] }}</td>
-            <td>{{ group_counts['count65_C1'] }}</td>
-            <td>{{ group_counts['count65_C2'] }}</td>
-            <td>{{sumall_65}}</td>
-          </tr>
-          <tr>
-            <th scope="row">66</th>
-            <td>{{ group_counts['count66_A1'] }}</td>
-            <td>{{ group_counts['count66_A2'] }}</td>
-            <td>{{ group_counts['count66_B1'] }}</td>
-            <td>{{ group_counts['count66_B2'] }}</td>
-            <td>{{ group_counts['count66_C1'] }}</td>
-            <td>{{ group_counts['count66_C2'] }}</td>
-            <td>{{sumall_66}}</td>
-          </tr>
-          <tr>
-            <th scope="row">67</th>
-            <td>{{ group_counts['count67_A1'] }}</td>
-            <td>{{ group_counts['count67_A2'] }}</td>
-            <td>{{ group_counts['count67_B1'] }}</td>
-            <td>{{ group_counts['count67_B2'] }}</td>
-            <td>{{ group_counts['count67_C1'] }}</td>
-            <td>{{ group_counts['count67_C2'] }}</td>
-            <td>{{sumall_67}}</td>
-          </tr>
-          <tr>
-            <th scope="row">ผลรวมทั้งหมด</th>
-            <td>{{ group_sums['sum_A1'] }}</td>
-            <td>{{ group_sums['sum_A2'] }}</td>
-            <td>{{ group_sums['sum_B1'] }}</td>
-            <td>{{ group_sums['sum_B2'] }}</td>
-            <td>{{ group_sums['sum_C1'] }}</td>
-            <td>{{ group_sums['sum_C2'] }}</td>
-            <td>{{sumall}}</td>
-          </tr>
+      <tr>
+        <th scope="row">64</th>
+        <td>{{ group_counts['count64_A1'] }}</td>
+        <td>{{ group_counts['count64_A2'] }}</td>
+        <td>{{ group_counts['count64_B1'] }}</td>
+        <td>{{ group_counts['count64_B2'] }}</td>
+        <td>{{ group_counts['count64_C1'] }}</td>
+        <td>{{ group_counts['count64_C2'] }}</td>
+        <td>{{ sumall_64 }}</td>
+      </tr>
+      <tr>
+        <th scope="row">65</th>
+        <td>{{ group_counts['count65_A1'] }}</td>
+        <td>{{ group_counts['count65_A2'] }}</td>
+        <td>{{ group_counts['count65_B1'] }}</td>
+        <td>{{ group_counts['count65_B2'] }}</td>
+        <td>{{ group_counts['count65_C1'] }}</td>
+        <td>{{ group_counts['count65_C2'] }}</td>
+        <td>{{ sumall_65 }}</td>
+      </tr>
+      <tr>
+        <th scope="row">66</th>
+        <td>{{ group_counts['count66_A1'] }}</td>
+        <td>{{ group_counts['count66_A2'] }}</td>
+        <td>{{ group_counts['count66_B1'] }}</td>
+        <td>{{ group_counts['count66_B2'] }}</td>
+        <td>{{ group_counts['count66_C1'] }}</td>
+        <td>{{ group_counts['count66_C2'] }}</td>
+        <td>{{sumall_66}}</td>
+      </tr>
+      <tr>
+        <th scope="row">67</th>
+        <td>{{ group_counts['count67_A1'] }}</td>
+        <td>{{ group_counts['count67_A2'] }}</td>
+        <td>{{ group_counts['count67_B1'] }}</td>
+        <td>{{ group_counts['count67_B2'] }}</td>
+        <td>{{ group_counts['count67_C1'] }}</td>
+        <td>{{ group_counts['count67_C2'] }}</td>
+        <td>{{sumall_67}}</td>
+      </tr>
+      <!-- Continue with more rows as needed -->
+      <tr>
+        <th scope="row">ผลรวมทั้งหมด</th>
+        <td>{{ group_sums['sum_A1'] }}</td>
+        <td>{{ group_sums['sum_A2'] }}</td>
+        <td>{{ group_sums['sum_B1'] }}</td>
+        <td>{{ group_sums['sum_B2'] }}</td>
+        <td>{{ group_sums['sum_C1'] }}</td>
+        <td>{{ group_sums['sum_C2'] }}</td>
+        <td>{{ sumall }}</td>
+      </tr>
     </tbody>
   </table>
 </div>
+
 <br>
-<div class="container-fluid border">
+
+<div class="container-fluid border rounded p-3 bg-light shadow-sm">
   <div class="table-responsive">
-    <table id="example" class="display table table-striped" style="width:100%">
-      <thead>
+    <table id="example" class="table table-striped table-hover table-bordered" style="width:100%">
+      <thead class="table-dark">
         <tr>
           <th scope="col">รหัสนักศึกษา</th>
           <th scope="col">ชื่อ นามสกุล</th>
@@ -124,7 +184,7 @@
         <tr>
           <td>{{ item['student_id'] }}</td>
           <td>{{ item['full_name'] }}</td>
-          <td>{{ item['score_ept']}}</td>
+          <td>{{ item['score_ept'] }}</td>
           <td>{{ item['group_'] }}</td>
           <td>{{ item['fac_name_th'] }}</td>
           <td>{{ item['program_name_th'] }}</td>

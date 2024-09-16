@@ -1,0 +1,70 @@
+{% extends "layoutadmin.html" %}
+
+{% block content %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container { max-width: 1000px; }
+        .form-container { margin-top: 20px; }
+    </style>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">การจัดการแอดมิน</h1>
+
+    <!-- ฟอร์มเพิ่มแอดมินใหม่ -->
+    <div class="form-container">
+        <h2>เพิ่มแอดมินใหม่</h2>
+        <form action="/m_admin" method="POST">
+            <input type="hidden" name="add_admin" value="1">
+            <div class="mb-3">
+                <label for="admin_name" class="form-label">username</label>
+                <input type="text" class="form-control" id="admin_username" name="admin_username" required>
+            </div>
+            <div class="mb-3">
+                <label for="admin_email" class="form-label">password</label>
+                <input type="password" class="form-control" id="admin_password" name="admin_password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">เพิ่มแอดมิน</button>
+        </form>
+    </div>
+
+    <!-- แสดงรายการแอดมิน -->
+    <div class="mt-4">
+        <h2>รายชื่อแอดมิน</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>การจัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in data %}
+                <tr>
+                    <td>{{ admin[0] }}</td>
+                    <td>{{ admin[1] }}</td>
+                    <td>{{ admin[2] }}</td>
+                    <td>
+                        <!-- ฟอร์มแก้ไขแอดมิน -->
+                        <form action="/m_admin" method="POST" class="d-inline">
+                            <input type="hidden" name="edit_admin" value="1">
+                            <input type="hidden" name="admin_id" value="{{ admin[0] }}">
+                            <input type="text" name="admin_username" value="{{ admin[1] }}" class="form-control mb-2" required>
+                            <input type="" name="admin_password" value="{{ admin[2] }}" class="form-control mb-2" required>
+                            <button type="submit" class="btn btn-warning">แก้ไข</button>
+                        </form>
+                        <!-- ฟอร์มลบแอดมิน -->
+                        <form action="/m_admin" method="POST" class="d-inline">
+                            <input type="hidden" name="delete_admin" value="1">
+                            <input type="hidden" name="admin_id" value="{{ admin[0] }}">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('คุณต้องการลบข้อมูลนี้หรือไม่?')">ลบ</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
