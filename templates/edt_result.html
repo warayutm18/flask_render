@@ -1,0 +1,43 @@
+{% extends "indexlayout.html" %}
+
+{% block content %}
+<title>แสดงคะแนนทักษะดิจิทัลของนักศึกษา</title>
+<style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .student-card {
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #ffffff;
+    }
+    .student-card h5 {
+      font-weight: bold;
+    }
+    .student-card p {
+      font-size: 1.1rem;
+    }
+    .badge-custom {
+      font-size: 1.1rem;
+      padding: 0.5em 1em;
+    }
+    .container {
+      max-width: 700px;
+    }
+  </style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">ข้อมูลคะแนนนักศึกษา</h1>
+    
+    <!-- Card for a single student -->
+    <div class="card student-card mb-3 p-4">
+      <div class="card-body text-center">
+        <h5 class="card-title mb-3">รหัสนักศึกษา: 64102122143</h5>
+        <p class="card-text mb-2"><strong>ชื่อ:</strong> นายวรายุทธ มะขะศรี</p>
+        <p class="card-text mb-2"><strong>คณะ:</strong> วิทยาศาสตร์และเทคโนโลยี</p>
+        <p class="card-text mb-2"><strong>สาขา:</strong> เทคโนโลยีคอมพิวเตอร์และดิจิทัล</p>
+        <p class="card-text mb-4"><strong>คะแนน:</strong> 85</p>
+        <p class="card-text"><strong>สถานะ:</strong> <span class="badge bg-success badge-custom">ผ่าน</span></p>
+      </div>
+    </div>
+{% endblock %}

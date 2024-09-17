@@ -18,6 +18,8 @@ mydb = mysql.connector.connect(
     database="bkmrzjuc0txca2pggcfn"
 )
 
+
+
 @app.route('/logout')
 def logout():
     session.pop('user', None)
@@ -207,6 +209,14 @@ def updateQ():
             print(f"มีข้อผิดพลาด: {err}")
 
         return redirect(url_for("exambank"))
+    
+@app.route("/edt_skill")
+def edt_skill():
+    return render_template("edt_skill.html")    
+
+@app.route("/edt_result")
+def edt_result():
+    return render_template("edt_result.html")   
 
 @app.route("/engskill")
 def engskill():
@@ -215,12 +225,12 @@ def engskill():
 @app.route("/eng_data")
 def eng_data():
     # ดึงข้อมูลจาก API
-    api_url = "https://db.snru.ac.th/api-mysql/ept_get_data_all.php"
-    response = requests.get(api_url, verify=False)
+    api_url = ""
+    response = requests.get(api_url,verify=False)
 
     # ตรวจสอบสถานะการร้องขอ
     if response.status_code == 200:
-        data = response.json()  # เปลี่ยนข้อมูลที่ได้เป็น JSON
+        data = response.json(api_url, verify=False)  # เปลี่ยนข้อมูลที่ได้เป็น JSON
 
         def filter_group_data(data, year, group):
             """ฟังก์ชันกรองข้อมูลตามปีและกลุ่ม"""
