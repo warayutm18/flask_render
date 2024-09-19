@@ -5,6 +5,7 @@ import requests
 import csv
 import pandas as pd
 from datetime import datetime, timedelta
+import certifi
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -75,6 +76,44 @@ def m_admin():
     mycursor.close()
 
     return render_template('m_admin.html', data=fetchdata)
+
+@app.route("/m_student", methods=["GET", "POST"])
+def m_student():
+    with mydb.cursor() as cursor:
+        if request.method == "POST":
+            action = request.form.get("action")
+            std_id = request.form.get("std_id")
+            username = request.form.get("username")
+            password = request.form.get("password")
+            firstname = request.form.get("firstname")
+            lastname = request.form.get("lastname")
+            faculty = request.form.get("faculty")
+            major = request.form.get("major")
+
+            if action == "add":
+                sql = "INSERT INTO students (std_id, username, password, firstname, lastname, faculty, major) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql, (std_id, username, password, firstname, lastname, faculty, major))
+                mydb.commit()
+
+            elif action == "edit":
+                sql = "UPDATE students SET username=%s, password=%s, firstname=%s, lastname=%s, faculty=%s, major=%s WHERE std_id=%s"
+                cursor.execute(sql, (username, password, firstname, lastname, faculty, major, std_id))
+                mydb.commit()
+
+            elif action == "delete":
+                sql = "DELETE FROM students WHERE std_id=%s"
+                cursor.execute(sql, (std_id,))
+                mydb.commit()
+
+        cursor.execute("SELECT * FROM students")
+        students = cursor.fetchall()
+
+    return render_template("m_student.html", students=students)
+         
+
+
+
+
 
 @app.route("/exambank", methods=['POST', 'GET'])
 def exambank():
@@ -225,12 +264,12 @@ def engskill():
 @app.route("/eng_data")
 def eng_data():
     # ดึงข้อมูลจาก API
-    api_url = ""
+    api_url = "https://db.snru.ac.th/api-mysql/ept_get_data_all.php"
     response = requests.get(api_url,verify=False)
 
     # ตรวจสอบสถานะการร้องขอ
     if response.status_code == 200:
-        data = response.json(api_url, verify=False)  # เปลี่ยนข้อมูลที่ได้เป็น JSON
+        data = response.json()  # เปลี่ยนข้อมูลที่ได้เป็น JSON
 
         def filter_group_data(data, year, group):
             """ฟังก์ชันกรองข้อมูลตามปีและกลุ่ม"""
@@ -416,6 +455,7 @@ def result():
 
 @app.route('/exam_result')
 def exam_result():
+    
     mycursor = mydb.cursor()
 
     username = session.get('username')
@@ -436,10 +476,30 @@ def exam_result():
     mycursor.execute("SELECT score FROM exam_results WHERE std_id = %s", (username,))
     score = mycursor.fetchone()[0]
     
+    if score >= 10 :
+        cefr = 'C2'
+        guidelines = '-'
+    elif score >= 8:
+        cefr = 'C1'
+        guidelines = 'นักศึกษาสามารถพัฒนาการใช้ภาษาให้เป็นมาตรฐานได้อย่างสละสลวย ถูกต้องตามจุดประสงค์ที่จะสื่อสารได้ดีสามารถอ่าน บทความที่เป็นภาษาต้นฉบับ (โดยเฉพาะอย่างยิ่งด้านวรรณกรรม) ได้เข้าใจ สามารถ และเลือกใช้ภาษาสำหรับพูดและเขียนได้อย่างเหมาะสม'
+    elif score >=6:
+        cefr = 'B2'
+        guidelines = 'นักศึกษาสามารถศึกษาการใช้ภาษาทางด้านสังคมการทำงาน หรือด้านการศึกษา เพื่อพัฒนาความสามารถด้านการพูดและเขียนข้อความที่ขับซ้อนได้อย่างชัดเจนและถูกต้องตามโครงสร้างไวยากรณ์ พร้อมทั้งสามารถใช้คำเชื่อมประโยคได้อย่างถูกต้อง'
+    elif score >=4:
+        cefr = 'B1'
+        guidelines = 'นักศึกษาสามารถศึกษาการอ่านและทำความเข้าใจบทความที่มีเนื้อหายากขึ้นและฝึกฟังภาษาอังกฤษเป็นประจำจากแหล่งข้อมูลต่าง ๆ เช่นข่าวภาษาอังกฤษ จัดสภาพแวดล้อมที่เอื้อต่อการเรียนรู้และพัฒนาภาษาอังกฤษ เช่น เปลี่ยนจากการฟังเพลงภาษาไทยเป็นเพลงภาษาอังกฤษ'
+    elif score >=2:
+        cefr = 'A2'
+        guidelines = 'นักศึกษาสามารถศึกษาการพูด เขียน และอ่านจับใจความสำคัญของข้อความทั่ว ๆ ไปเพิ่มเติม เช่น การทำงาน โรงเรียน เวลาว่าง ฯลฯ สามารถจัดการกับสถานการณ์ต่าง ๆ ที่เกิดขึ้นระหว่างการเดินทางในประเทศที่ใช้ภาษาได้ ฝึกบรรยายประสบการณ์ความฝัน ความหวัง พร้อมให้เหตุผลสั้นๆได้'
+    else:
+        cefr = 'A1'
+        guidelines = 'นักศึกษาสามารถศึกษาประโยคในชีวิตประจำวันในระดับกลางเพิ่ม เช่น ข้อมูลเกี่ยวกับครอบครัว การจับจ่ายใช้สอย สถานที่ ภูมิศาสตร์ การทำงาน และสามารถสื่อสารในประโยคในการแลกเปลี่ยนข้อมูลทั่วไปและการใช้ชีวิตประจำวันสามารถบรรยายความฝัน ความคาดหวัง ประวัติ สิ่งแวดล้อม และสิ่งอื่นๆ ที่จำเป็นต้องใช้'
+    
     total_questions = len(fetchdata)
     if user_info:
         std_id, firstname, lastname, faculty, major = user_info
-    return render_template('exam_result.html', score=score, total_questions=total_questions, firstname=firstname, lastname=lastname, faculty=faculty, major=major, std_id=std_id)
+    return render_template('exam_result.html', score=score, total_questions=total_questions, firstname=firstname, 
+                           lastname=lastname, faculty=faculty, major=major, std_id=std_id,guidelines= guidelines,cefr= cefr)
 
 @app.route('/edt_data')
 def edt_data():
