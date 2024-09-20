@@ -265,8 +265,8 @@ def engskill():
 def eng_data():
     # ดึงข้อมูลจาก API
     url = 'https://db.snru.ac.th/api-mysql/ept_get_data_all.php'
-    cert_path = r"C:\certificate_flask\New folder\_.snru.ac.th.crt"
-    response = requests.get(url, verify=cert_path)
+    #cert_path = r"C:\certificate_flask\New folder\_.snru.ac.th.crt"
+    response = requests.get(url, verify=False)
 
     # ตรวจสอบสถานะการร้องขอ
     if response.status_code == 200:
