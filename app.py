@@ -265,8 +265,8 @@ def engskill():
 def eng_data():
     # ดึงข้อมูลจาก API
     url = 'https://db.snru.ac.th/api-mysql/ept_get_data_all.php'
-    #cert_path = r"C:\certificate_flask\New folder\_.snru.ac.th.crt"
-    response = requests.get(url, verify=False)
+    cert_path = r"C:\certificate_flask\New folder\_.snru.ac.th.crt"
+    response = requests.get(url, verify=cert_path)
 
     # ตรวจสอบสถานะการร้องขอ
     if response.status_code == 200:
@@ -374,7 +374,7 @@ def quiz():
             return redirect(url_for('result'))
 
     # กำหนดระยะเวลา (ตัวอย่าง 10 นาที)
-    total_time = timedelta(minutes=2)
+    total_time = timedelta(minutes=10)
 
     # คำนวณเวลาที่เหลือ
     start_time = datetime.strptime(session['start_time'], '%Y-%m-%d %H:%M:%S')
