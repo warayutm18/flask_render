@@ -13,10 +13,10 @@ app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif', 'mp3', 'wav'])
 mydb = mysql.connector.connect(
-    host="bkmrzjuc0txca2pggcfn-mysql.services.clever-cloud.com",
-    user="uaxbdpnfmiwngrxc",
-    password="wmrvJFQd69gb7FOGZnMy",
-    database="bkmrzjuc0txca2pggcfn"
+    host="sql12.freesqldatabase.com",
+    user="sql12736099",
+    password="hWhwD9lVqJ",
+    database="sql12736099"
 )
 
 
@@ -450,9 +450,26 @@ def result():
             (std_id, score)
         )
         mydb.commit()
-        
+    if score >= 10 :
+        cefr = 'C2'
+        guidelines = '-'
+    elif score >= 8:
+        cefr = 'C1'
+        guidelines = 'นักศึกษาสามารถพัฒนาการใช้ภาษาให้เป็นมาตรฐานได้อย่างสละสลวย ถูกต้องตามจุดประสงค์ที่จะสื่อสารได้ดีสามารถอ่าน บทความที่เป็นภาษาต้นฉบับ (โดยเฉพาะอย่างยิ่งด้านวรรณกรรม) ได้เข้าใจ สามารถ และเลือกใช้ภาษาสำหรับพูดและเขียนได้อย่างเหมาะสม'
+    elif score >=6:
+        cefr = 'B2'
+        guidelines = 'นักศึกษาสามารถศึกษาการใช้ภาษาทางด้านสังคมการทำงาน หรือด้านการศึกษา เพื่อพัฒนาความสามารถด้านการพูดและเขียนข้อความที่ขับซ้อนได้อย่างชัดเจนและถูกต้องตามโครงสร้างไวยากรณ์ พร้อมทั้งสามารถใช้คำเชื่อมประโยคได้อย่างถูกต้อง'
+    elif score >=4:
+        cefr = 'B1'
+        guidelines = 'นักศึกษาสามารถศึกษาการอ่านและทำความเข้าใจบทความที่มีเนื้อหายากขึ้นและฝึกฟังภาษาอังกฤษเป็นประจำจากแหล่งข้อมูลต่าง ๆ เช่นข่าวภาษาอังกฤษ จัดสภาพแวดล้อมที่เอื้อต่อการเรียนรู้และพัฒนาภาษาอังกฤษ เช่น เปลี่ยนจากการฟังเพลงภาษาไทยเป็นเพลงภาษาอังกฤษ'
+    elif score >=2:
+        cefr = 'A2'
+        guidelines = 'นักศึกษาสามารถศึกษาการพูด เขียน และอ่านจับใจความสำคัญของข้อความทั่ว ๆ ไปเพิ่มเติม เช่น การทำงาน โรงเรียน เวลาว่าง ฯลฯ สามารถจัดการกับสถานการณ์ต่าง ๆ ที่เกิดขึ้นระหว่างการเดินทางในประเทศที่ใช้ภาษาได้ ฝึกบรรยายประสบการณ์ความฝัน ความหวัง พร้อมให้เหตุผลสั้นๆได้'
+    else:
+        cefr = 'A1'
+        guidelines = 'นักศึกษาสามารถศึกษาประโยคในชีวิตประจำวันในระดับกลางเพิ่ม เช่น ข้อมูลเกี่ยวกับครอบครัว การจับจ่ายใช้สอย สถานที่ ภูมิศาสตร์ การทำงาน และสามารถสื่อสารในประโยคในการแลกเปลี่ยนข้อมูลทั่วไปและการใช้ชีวิตประจำวันสามารถบรรยายความฝัน ความคาดหวัง ประวัติ สิ่งแวดล้อม และสิ่งอื่นๆ ที่จำเป็นต้องใช้'
     # แสดงผลคะแนน
-    return render_template('result.html', score=score, total_questions=total_questions, firstname=firstname, lastname=lastname, faculty=faculty, major=major, std_id=std_id)
+    return render_template('result.html', score=score, total_questions=total_questions, firstname=firstname, lastname=lastname, faculty=faculty, major=major, std_id=std_id,guidelines= guidelines,cefr= cefr)
 
 @app.route('/exam_result')
 def exam_result():
@@ -526,6 +543,7 @@ def edt_data():
     # คำนวณค่าผลรวมสำหรับแต่ละคณะในปี 2565 และ 2566
     faculties = ['วิทยาศาสตร์และเทคโนโลยี', 'ครุศาสตร์', 'วิทยาการจัดการ', 'เทคโนโลยีการเกษตร', 'เทคโนโลยีอุตสาหกรรม']
     faculty_totals = {faculty: {'2565': get_totals(df, 2565, faculty), '2566': get_totals(df, 2566, faculty)} for faculty in faculties}
+
 
     
 
