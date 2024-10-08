@@ -274,7 +274,7 @@ def eng_data():
 
         def filter_group_data(data, year, group):
             """ฟังก์ชันกรองข้อมูลตามปีและกลุ่ม"""
-            return [item for item in data if str(item['student_id']).startswith(str(year)) and item['group_'] == group]
+            return [item for item in data if str(item['student_id']).startswith(str(year)) and item['group'] == group]
 
         # สร้างพจนานุกรมเก็บจำนวนข้อมูลของแต่ละกลุ่ม
         group_counts = {}
