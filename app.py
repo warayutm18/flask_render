@@ -13,10 +13,10 @@ app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif', 'mp3', 'wav'])
 mydb = mysql.connector.connect(
-    host="sql12.freesqldatabase.com",
-    user="sql12736099",
-    password="hWhwD9lVqJ",
-    database="sql12736099"
+    host="bkmrzjuc0txca2pggcfn-mysql.services.clever-cloud.com",
+    user="uaxbdpnfmiwngrxc",
+    password="wmrvJFQd69gb7FOGZnMy",
+    database="bkmrzjuc0txca2pggcfn"
 )
 
 
@@ -168,6 +168,10 @@ def exambank():
     return render_template('m_exam.html', q_data=fetchdata, total_questions=question_count)
 
 
+@app.route("/person",methods=['POST','GET'])
+def person():
+    return render_template('person.html')
+
 @app.route("/",methods=['POST','GET'])
 def login():
     if request.method == 'POST':
@@ -178,9 +182,15 @@ def login():
         mycursor.execute("SELECT * FROM admin WHERE username = %s and password = %s",(username,password))
         user = mycursor.fetchone()
 
+        mycursor = mydb.cursor()
+        mycursor.execute("SELECT * FROM person WHERE username = %s and password = %s",(username,password))
+        user3 = mycursor.fetchone()
         if user:
             session['username'] = username
             return redirect(url_for('admin'))
+        elif user3:
+            session['username'] = username
+            return redirect(url_for('person'))
         else:
             mycursor = mydb.cursor()
             mycursor.execute("SELECT * FROM students WHERE username = %s and password = %s",(username,password))
