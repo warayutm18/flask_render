@@ -174,15 +174,16 @@ def person():
 
 @app.route("/",methods=['POST','GET'])
 def login():
+    mycursor = mydb.cursor()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
-        mycursor = mydb.cursor()
+        
         mycursor.execute("SELECT * FROM admin WHERE username = %s and password = %s",(username,password))
         user = mycursor.fetchone()
 
-        mycursor = mydb.cursor()
+        
         mycursor.execute("SELECT * FROM person WHERE username = %s and password = %s",(username,password))
         user3 = mycursor.fetchone()
         if user:
@@ -192,7 +193,7 @@ def login():
             session['username'] = username
             return redirect(url_for('person'))
         else:
-            mycursor = mydb.cursor()
+            
             mycursor.execute("SELECT * FROM students WHERE username = %s and password = %s",(username,password))
             user2 = mycursor.fetchone()
             if user2:
