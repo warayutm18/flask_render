@@ -187,6 +187,8 @@ def login():
             if user2:
                 session['username'] = username
                 return redirect(url_for('index'))
+        mycursor.close()
+        mydb.close()
     return render_template('login.html')
 
 @app.route("/deleteQ/<int:id_data>", methods = ['GET'])
