@@ -182,13 +182,12 @@ def login():
             session['username'] = username
             return redirect(url_for('admin'))
         else:
+            mycursor = mydb.cursor()
             mycursor.execute("SELECT * FROM students WHERE username = %s and password = %s",(username,password))
             user2 = mycursor.fetchone()
             if user2:
                 session['username'] = username
                 return redirect(url_for('index'))
-        mycursor.close()
-        mydb.close()
     return render_template('login.html')
 
 @app.route("/deleteQ/<int:id_data>", methods = ['GET'])
@@ -525,15 +524,16 @@ def exam_result():
 def edt_data():
     # อ่านข้อมูลจากไฟล์ CSV
     df = pd.read_csv('data/data.csv')
-
+    dg = pd.read_csv('data/edt_data.csv')
     # ดึงข้อมูลจากคอลัมน์ที่ต้องการ เช่น 'ปีการศึกษา', 'คณะ', 'นักศึกษาทั้งหมด'
     column1_data = df['ปีการศึกษา'].tolist()  # แปลงคอลัมน์เป็น list
     column2_data = df['คณะ'].tolist()
 
     rows = df.iterrows()
-
+    rowx = dg.iterrows()
     # แปลงข้อมูลแถวเป็นลิสต์ของแถวที่เป็นลิสต์หรือดิกชันนารี
     row_data = [row[1].to_dict() for row in rows]
+    row_datax = [row[1].to_dict() for row in rowx]
 
     # ฟังก์ชันสำหรับคำนวณค่าผลรวม
     def get_totals(df, year, faculty):
@@ -553,7 +553,7 @@ def edt_data():
     return render_template('edt_data.html', 
                            column1=column1_data,
                            column2=column2_data, 
-                           rows=row_data, 
+                           rows=row_data,rowx=row_datax, 
                            faculty_totals=faculty_totals)
 
     
